@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>RTM Monitoring Dashboard — Global Food Waste Reduction Network</title>
+<style>
+  :root {
+    --bg: #f5f6f8;
+    --surface: #ffffff;
+    --border: #e2e5ea;
+    --text-primary: #1a1f2b;
+    --text-secondary: #5b6472;
+    --text-muted: #8a93a3;
+    --navy: #1f3864;
+    --blue: #2e75b6;
+    --blue-light: #e6f1fb;
+    --red: #c0392b;
+    --red-light: #fbeaea;
+    --amber: #b8860b;
+    --amber-light: #fdf3e0;
+    --green: #2f8f4e;
+    --green-light: #e8f6ec;
+    --gray: #94a3b8;
+    --gray-light: #eef1f5;
+    --radius: 10px;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--text-primary);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    line-height: 1.5;
+  }
+  .wrap { max-width: 1080px; margin: 0 auto; padding: 2rem 1.5rem 4rem; }
+  header { margin-bottom: 2rem; }
+  header .eyebrow { font-size: 13px; color: var(--blue); font-weight: 600; text-transform: uppercase; letter-spacing: 0.04em; margin: 0 0 6px; }
+  header h1 { font-size: 26px; font-weight: 600; margin: 0 0 6px; color: var(--navy); }
+  header p { font-size: 14px; color: var(--text-secondary); margin: 0; }
+  .snapshot-note { display: inline-flex; align-items: center; gap: 6px; margin-top: 12px; font-size: 12.5px; color: var(--text-muted); background: var(--surface); border: 1px solid var(--border); border-radius: 6px; padding: 6px 10px; }
+  section { margin-bottom: 2.25rem; }
+  h2 { font-size: 15px; font-weight: 600; color: var(--text-primary); margin: 0 0 12px; display: flex; align-items: center; gap: 8px; }
+  h2 .num { display: inline-flex; align-items: center; justify-content: center; width: 20px; height: 20px; border-radius: 50%; background: var(--navy); color: #fff; font-size: 11px; font-weight: 700; flex-shrink: 0; }
+  .kpi-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 14px; }
+  .kpi-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 1rem 1.15rem; }
+  .kpi-card .label { font-size: 12.5px; color: var(--text-secondary); margin: 0 0 6px; }
+  .kpi-card .value { font-size: 28px; font-weight: 700; margin: 0; color: var(--navy); }
+  .kpi-card .sub { font-size: 12px; color: var(--text-muted); margin: 4px 0 0; }
+  .kpi-card.warn .value { color: var(--amber); }
+  .kpi-card.risk .value { color: var(--red); }
+  .kpi-card.good .value { color: var(--green); }
+  .grid-2 { display: grid; grid-template-columns: 1.3fr 1fr; gap: 20px; }
+  .card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 1.25rem 1.35rem; }
+  .card + .card { margin-top: 16px; }
+  .chart-box { position: relative; width: 100%; }
+  .legend-row { display: flex; flex-wrap: wrap; gap: 14px; margin-top: 10px; font-size: 12.5px; color: var(--text-secondary); }
+  .legend-row span.dot { display: inline-block; width: 10px; height: 10px; border-radius: 2px; margin-right: 5px; vertical-align: -1px; }
+  .segbar { display: flex; height: 22px; border-radius: 5px; overflow: hidden; }
+  .segbar-label { font-size: 13px; color: var(--text-secondary); margin: 0 0 8px; }
+  table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  th, td { text-align: left; padding: 8px 10px; border-bottom: 1px solid var(--border); }
+  th { color: var(--text-secondary); font-weight: 600; font-size: 12px; text-transform: uppercase; letter-spacing: 0.02em; }
+  tr:last-child td { border-bottom: none; }
+  .badge { display: inline-block; padding: 2px 9px; border-radius: 20px; font-size: 11.5px; font-weight: 600; }
+  .badge.high { background: var(--red-light); color: var(--red); }
+  .badge.medium { background: var(--amber-light); color: var(--amber); }
+  .badge.not-started { background: var(--gray-light); color: #55606f; }
+  .badge.in-progress { background: var(--blue-light); color: var(--blue); }
+  .badge.done { background: var(--green-light); color: var(--green); }
+  .callout { display: flex; gap: 12px; border-radius: var(--radius); padding: 1rem 1.15rem; margin-bottom: 1rem; }
+  .callout.warn { background: var(--amber-light); border: 1px solid #eddca8; }
+  .callout.warn .icon, .callout.warn .title, .callout.warn .body { color: #6b5309; }
+  .callout.ok { background: var(--green-light); border: 1px solid #bfe0c9; }
+  .callout.ok .icon, .callout.ok .title, .callout.ok .body { color: #205430; }
+  .callout .icon { font-size: 18px; flex-shrink: 0; }
+  .callout .title { font-weight: 600; font-size: 13.5px; margin: 0 0 4px; }
+  .callout .body { font-size: 13px; margin: 0; }
+  .fix-table td, .fix-table th { font-size: 12.5px; }
+  .subhead { font-size: 12.5px; color: var(--text-muted); margin: 0 0 10px; }
+  .changelog { list-style: none; margin: 0; padding: 0; }
+  .changelog li { position: relative; padding: 0 0 1.1rem 22px; border-left: 2px solid var(--border); margin-left: 5px; }
+  .changelog li:last-child { border-left-color: transparent; padding-bottom: 0; }
+  .changelog li::before { content: ""; position: absolute; left: -6px; top: 2px; width: 10px; height: 10px; border-radius: 50%; background: var(--blue); border: 2px solid var(--surface); }
+  .changelog li.resolved::before { background: var(--green); }
+  .changelog .tag { display: inline-block; font-size: 11px; font-weight: 700; color: var(--navy); background: var(--blue-light); padding: 1px 8px; border-radius: 4px; margin-right: 8px; }
+  .changelog .date { font-size: 12px; color: var(--text-muted); }
+  .changelog p { margin: 6px 0 0; font-size: 13px; color: var(--text-secondary); }
+  footer { margin-top: 2.5rem; padding-top: 1.25rem; border-top: 1px solid var(--border); font-size: 12px; color: var(--text-muted); }
+  @media (max-width: 720px) { .grid-2 { grid-template-columns: 1fr; } }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header>
+    <p class="eyebrow">Requirements traceability matrix</p>
+    <h1>RTM monitoring dashboard</h1>
+    <p>Global Food Waste Reduction Network — tracks requirement coverage, test progress, and traceability health.</p>
+    <div class="snapshot-note">Snapshot generated July 2, 2026 from RTM_Global_Food_Waste_Reduction_Network.xlsx (v2.2) — refresh by regenerating this file when the RTM changes.</div>
+  </header>
+
+  <section>
+    <h2><span class="num">1</span>Coverage &amp; progress</h2>
+    <div class="kpi-grid">
+      <div class="kpi-card">
+        <p class="label">Total requirements</p>
+        <p class="value">25</p>
+        <p class="sub">Across 6 categories</p>
+      </div>
+      <div class="kpi-card">
+        <p class="label">Test case coverage</p>
+        <p class="value">100%</p>
+        <p class="sub">25 of 25 requirements</p>
+      </div>
+      <div class="kpi-card good">
+        <p class="label">Development done</p>
+        <p class="value">16%</p>
+        <p class="sub">4 of 25 requirements</p>
+      </div>
+      <div class="kpi-card warn">
+        <p class="label">Testing in progress</p>
+        <p class="value">12%</p>
+        <p class="sub">3 of 25 test cases</p>
+      </div>
+      <div class="kpi-card risk">
+        <p class="label">At risk</p>
+        <p class="value">14</p>
+        <p class="sub">High priority, dev not started</p>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <h2><span class="num">2</span>Development &amp; test status</h2>
+    <div class="card">
+      <p class="segbar-label">Development status</p>
+      <div class="segbar">
+        <div style="width:64%;background:var(--gray);"></div>
+        <div style="width:20%;background:var(--blue);"></div>
+        <div style="width:16%;background:var(--green);"></div>
+      </div>
+      <div class="legend-row">
+        <span><span class="dot" style="background:var(--gray);"></span>Not started — 16 (64%)</span>
+        <span><span class="dot" style="background:var(--blue);"></span>In progress — 5 (20%)</span>
+        <span><span class="dot" style="background:var(--green);"></span>Done — 4 (16%)</span>
+      </div>
+    </div>
+    <div class="card">
+      <p class="segbar-label">Test status</p>
+      <div class="segbar">
+        <div style="width:88%;background:var(--gray);"></div>
+        <div style="width:12%;background:var(--blue);"></div>
+        <div style="width:0%;background:var(--green);"></div>
+      </div>
+      <div class="legend-row">
+        <span><span class="dot" style="background:var(--gray);"></span>Not tested — 22 (88%)</span>
+        <span><span class="dot" style="background:var(--blue);"></span>In progress — 3 (12%)</span>
+        <span><span class="dot" style="background:var(--green);"></span>Passed — 0 (0%)</span>
+      </div>
+      <p class="subhead" style="margin:10px 0 0;">FR-02, FR-03, and FR-10 have completed development (Done) and are now being tested (In progress).</p>
+    </div>
+  </section>
+
+  <section>
+    <h2><span class="num">3</span>Requirement mix</h2>
+    <div class="grid-2">
+      <div class="card">
+        <p style="font-size:13px;color:var(--text-secondary);margin:0 0 10px;">Requirements by category</p>
+        <div class="chart-box" style="height:220px;">
+          <canvas id="catChart" role="img" aria-label="Horizontal bar chart of requirements by category: Functional 10, Business 4, Non-functional 3, Quality 3, Project 3, Stakeholder 2">Functional 10, Business 4, Non-functional 3, Quality 3, Project 3, Stakeholder 2</canvas>
+        </div>
+      </div>
+      <div class="card">
+        <p style="font-size:13px;color:var(--text-secondary);margin:0 0 10px;">Priority mix</p>
+        <div class="chart-box" style="height:180px;">
+          <canvas id="prioChart" role="img" aria-label="Donut chart of requirement priority: High 19, Medium 6">High 19, Medium 6</canvas>
+        </div>
+        <div class="legend-row" style="justify-content:center;">
+          <span><span class="dot" style="background:#c0392b;"></span>High 76% (19)</span>
+          <span><span class="dot" style="background:#b8860b;"></span>Medium 24% (6)</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <h2><span class="num">4</span>At-risk requirements <span style="font-weight:400;color:var(--text-muted);font-size:12.5px;">— high priority, development not started</span></h2>
+    <div class="card" style="padding:0;">
+      <table>
+        <thead>
+          <tr><th>ID</th><th>Requirement</th><th>Category</th><th>Priority</th><th>Dev status</th></tr>
+        </thead>
+        <tbody id="riskTableBody"></tbody>
+      </table>
+    </div>
+  </section>
+
+  <section>
+    <h2><span class="num">5</span>Traceability integrity</h2>
+    <div class="callout ok">
+      <div class="icon">&#10003;</div>
+      <div>
+        <p class="title">Duplicate resolved</p>
+        <p class="body">NFR-02 and NFR-03 previously contained identical requirement text ("Data security &amp; privacy&hellip;"). Row NFR-03 and its test case TC-NFR-03 have been removed; the requirement is now tracked once under NFR-02. RTM and Test Cases tabs both contain 25 rows with no duplicates.</p>
+      </div>
+    </div>
+    <div class="card" style="padding:0;">
+      <table class="fix-table">
+        <thead>
+          <tr><th>RTM row (at the time)</th><th>Requirement ID</th><th>Previous test case ID</th><th>Corrected test case ID</th></tr>
+        </thead>
+        <tbody id="fixTableBody"></tbody>
+      </table>
+    </div>
+    <p style="font-size:12.5px;color:var(--text-muted);margin:10px 2px 0;">Corrections applied in an earlier verification pass, before the NFR-03 duplicate was removed — kept here for the audit trail.</p>
+  </section>
+
+  <section>
+    <h2><span class="num">6</span>Changelog</h2>
+    <div class="card">
+      <ul class="changelog">
+        <li><span class="tag">v1</span><span class="date">Jul 2, 2026</span><p>Initial RTM created from the Project Charter, Project Research Areas doc, existing PRD, and three requirements team meeting transcripts. 58 requirements across 7 categories (Business, Stakeholder, Functional, Non-Functional, Quality, Transition, Project).</p></li>
+        <li><span class="tag">v2</span><span class="date">Jul 2, 2026</span><p>Team review scoped the RTM down to 26 requirements. All Transition requirements removed; Business 9&rarr;4, Stakeholder 9&rarr;2, Non-Functional 11&rarr;4, Quality 6&rarr;3, Project 7&rarr;3. Functional (10) unchanged.</p></li>
+        <li><span class="tag">v2.1</span><span class="date">Jul 2, 2026</span><p>Added a Test Cases tab (26 test cases, 100% requirement coverage). Corrected 5 mismatched Test Case IDs. Flagged NFR-02 / NFR-03 as duplicate requirement text pending team consolidation.</p></li>
+        <li class="resolved"><span class="tag">v2.2</span><span class="date">Jul 2, 2026</span><p>Removed duplicate row NFR-03 and its test case TC-NFR-03 (25 requirements, 25 test cases remain). Development Status updated: FR-02, FR-03, FR-06, FR-10 marked Done; BR-03, BR-04, FR-01, NFR-02, QR-03 marked In Progress. Test Status synced accordingly: FR-02, FR-03, FR-10 now In Progress testing.</p></li>
+      </ul>
+    </div>
+  </section>
+
+  <footer>
+    Source: RTM_Global_Food_Waste_Reduction_Network.xlsx (RTM, Test Cases, and Traceability Verification tabs). This is a static snapshot — update the data arrays in this file's script and re-publish whenever the RTM changes.
+  </footer>
+
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<script>
+const riskData = [
+  ["BR-01","Reduce Global Food Waste","Business"],
+  ["BR-02","Food Redistribution Target","Business"],
+  ["SR-01","Donor Food Listing","Stakeholder"],
+  ["SR-02","Regulatory Compliance Assurance","Stakeholder"],
+  ["FR-04","Real-Time Notifications","Functional"],
+  ["FR-05","Impact Tracking & Reporting","Functional"],
+  ["FR-07","Third-Party Service Integration","Functional"],
+  ["NFR-01","Scalability & Performance","Non-Functional"],
+  ["NFR-04","Multi-Factor Authentication","Non-Functional"],
+  ["QR-01","QA Review Cycles","Quality"],
+  ["QR-02","User Acceptance Testing","Quality"],
+  ["PJR-01","12-Month Delivery Timeline","Project"],
+  ["PJR-02","Budget Adherence","Project"],
+  ["PJR-03","Regulatory Compliance Constraint","Project"]
+];
+const riskBody = document.getElementById("riskTableBody");
+riskData.forEach(function(r) {
+  const tr = document.createElement("tr");
+  tr.innerHTML = "<td><strong>" + r[0] + "</strong></td><td>" + r[1] + "</td><td>" + r[2] +
+    "</td><td><span class=\"badge high\">High</span></td><td><span class=\"badge not-started\">Not started</span></td>";
+  riskBody.appendChild(tr);
+});
+
+const fixData = [
+  [5, "BR-04", "TC-BR-05", "TC-BR-04"],
+  [7, "SR-02", "TC-SR-04", "TC-SR-02"],
+  [19, "NFR-02", "TC-NFR-04", "TC-NFR-02"],
+  [20, "NFR-03", "TC-NFR-04", "TC-NFR-03"],
+  [21, "NFR-04", "TC-NFR-05", "TC-NFR-04"]
+];
+const fixBody = document.getElementById("fixTableBody");
+fixData.forEach(function(r) {
+  const tr = document.createElement("tr");
+  tr.innerHTML = "<td>" + r[0] + "</td><td><strong>" + r[1] + "</strong></td><td style=\"color:#c0392b;\">" + r[2] +
+    "</td><td style=\"color:#2f8f4e;\">" + r[3] + "</td>";
+  fixBody.appendChild(tr);
+});
+
+const muted = "#5b6472";
+const grid = "#e2e5ea";
+const blue = "#2e75b6";
+
+new Chart(document.getElementById("catChart"), {
+  type: "bar",
+  data: {
+    labels: ["Functional", "Business", "Non-functional", "Quality", "Project", "Stakeholder"],
+    datasets: [{ data: [10, 4, 3, 3, 3, 2], backgroundColor: blue, borderRadius: 4, maxBarThickness: 20 }]
+  },
+  options: {
+    indexAxis: "y",
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: { legend: { display: false } },
+    scales: {
+      x: { beginAtZero: true, ticks: { stepSize: 2, color: muted, font: { size: 11 } }, grid: { color: grid } },
+      y: { ticks: { color: muted, font: { size: 11 } }, grid: { display: false } }
+    }
+  }
+});
+
+new Chart(document.getElementById("prioChart"), {
+  type: "doughnut",
+  data: {
+    labels: ["High", "Medium"],
+    datasets: [{ data: [19, 6], backgroundColor: ["#c0392b", "#b8860b"], borderColor: "#ffffff", borderWidth: 2 }]
+  },
+  options: {
+    responsive: true,
+    maintainAspectRatio: false,
+    cutout: "65%",
+    plugins: { legend: { display: false } }
+  }
+});
+</script>
+</body>
+</html>

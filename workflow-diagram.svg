@@ -1,0 +1,55 @@
+<svg viewBox="0 0 1700 420" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="wf-title wf-desc">
+<title id="wf-title">Requirements to dashboard workflow</title>
+<desc id="wf-desc">Five stage workflow: Collect Requirements in ChatGPT, with a human review checkpoint, then Get RTM Template from PMI Infinity, then Requirements Traceability Matrix Creation, Create Test Cases, and Create a Dashboard, all three done in Claude.</desc>
+<rect x="0" y="0" width="1700" height="420" fill="#ffffff"/>
+<g stroke="#8fd3e0" stroke-width="2" fill="none">
+<line x1="240" y1="150" x2="330" y2="150"/>
+<line x1="410" y1="150" x2="500" y2="150"/>
+<line x1="670" y1="150" x2="760" y2="150"/>
+<line x1="1030" y1="150" x2="1120" y2="150"/>
+<line x1="1390" y1="150" x2="1480" y2="150"/>
+</g>
+<circle cx="285" cy="150" r="8" fill="#4fb8c4"/>
+<circle cx="715" cy="150" r="8" fill="#4fb8c4"/>
+<circle cx="1075" cy="150" r="8" fill="#4fb8c4"/>
+<circle cx="1435" cy="150" r="8" fill="#4fb8c4"/>
+<g font-family="Helvetica, Arial, sans-serif">
+<text x="285" y="80" text-anchor="middle" font-size="15" font-style="italic" fill="#333333">Human</text>
+<text x="285" y="100" text-anchor="middle" font-size="15" font-style="italic" fill="#333333">Review</text>
+<line x1="285" y1="108" x2="285" y2="140" stroke="#333333" stroke-width="1.5" marker-end="url(#arrow)"/>
+</g>
+<defs>
+<marker id="arrow" markerWidth="8" markerHeight="8" refX="4" refY="4" orient="auto">
+<path d="M0,0 L8,4 L0,8 z" fill="#333333"/>
+</marker>
+</defs>
+<g font-family="Helvetica, Arial, sans-serif" text-anchor="middle">
+<circle cx="150" cy="150" r="90" fill="#ffffff" stroke="#5bc8d9" stroke-width="2.5"/>
+<text x="150" y="142" font-size="19" font-weight="700" fill="#1f6f8b">Collect</text>
+<text x="150" y="166" font-size="19" font-weight="700" fill="#1f6f8b">Requirements</text>
+<rect x="90" y="252" width="120" height="30" rx="6" fill="#4fb8c4"/>
+<text x="150" y="272" font-size="14" font-weight="600" fill="#ffffff">ChatGPT</text>
+<circle cx="555" cy="150" r="90" fill="#ffffff" stroke="#5bc8d9" stroke-width="2.5"/>
+<text x="555" y="142" font-size="19" font-weight="700" fill="#1f6f8b">Get</text>
+<text x="555" y="166" font-size="19" font-weight="700" fill="#1f6f8b">RTM Template</text>
+<rect x="475" y="252" width="160" height="30" rx="6" fill="#4fb8c4"/>
+<text x="555" y="272" font-size="14" font-weight="600" fill="#ffffff">PMI Infinity</text>
+<circle cx="915" cy="150" r="90" fill="#ffffff" stroke="#5bc8d9" stroke-width="2.5"/>
+<text x="915" y="120" font-size="18" font-weight="700" fill="#1f6f8b">Requirements</text>
+<text x="915" y="144" font-size="18" font-weight="700" fill="#1f6f8b">Traceability</text>
+<text x="915" y="168" font-size="18" font-weight="700" fill="#1f6f8b">Matrix</text>
+<text x="915" y="192" font-size="18" font-weight="700" fill="#1f6f8b">Creation</text>
+<rect x="855" y="252" width="120" height="30" rx="6" fill="#c96b3a"/>
+<text x="915" y="272" font-size="14" font-weight="600" fill="#ffffff">Claude</text>
+<circle cx="1275" cy="150" r="90" fill="#ffffff" stroke="#5bc8d9" stroke-width="2.5"/>
+<text x="1275" y="142" font-size="19" font-weight="700" fill="#1f6f8b">Create</text>
+<text x="1275" y="166" font-size="19" font-weight="700" fill="#1f6f8b">Test Cases</text>
+<rect x="1215" y="252" width="120" height="30" rx="6" fill="#c96b3a"/>
+<text x="1275" y="272" font-size="14" font-weight="600" fill="#ffffff">Claude</text>
+<circle cx="1610" cy="150" r="90" fill="#ffffff" stroke="#5bc8d9" stroke-width="2.5"/>
+<text x="1610" y="142" font-size="19" font-weight="700" fill="#1f6f8b">Create a</text>
+<text x="1610" y="166" font-size="19" font-weight="700" fill="#1f6f8b">Dashboard</text>
+<rect x="1550" y="252" width="120" height="30" rx="6" fill="#c96b3a"/>
+<text x="1610" y="272" font-size="14" font-weight="600" fill="#ffffff">Claude</text>
+</g>
+</svg>
